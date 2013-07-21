@@ -1,11 +1,15 @@
-package com.mypackage.name;
+package com.badrit.contactPlugin;
 
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.Intents;
+import android.util.Log;
+
 import org.apache.cordova.api.CallbackContext;
 import org.apache.cordova.api.CordovaPlugin;
 import org.apache.cordova.api.PluginResult;
@@ -18,14 +22,13 @@ public class ContactPickerPlugin extends CordovaPlugin {
     private CallbackContext callbackContext;
 
     private static final int CHOOSE_CONTACT = 1;
+    private static final int INSERT_CONTACT = 2;
 
-	@Override
-	public boolean execute(String action, JSONArray data, CallbackContext callbackContext) {
+    @Override
+    public boolean execute(String action, JSONArray data, CallbackContext callbackContext) {
         this.callbackContext = callbackContext;
-	    this.context = cordova.getActivity().getApplicationContext();
-
-		if (action.equals("chooseContact")) {
-
+        this.context = cordova.getActivity().getApplicationContext();
+        if (action.equals("chooseContact")) {
             Intent intent = new Intent(Intent.ACTION_PICK,
                     ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
 
@@ -35,10 +38,22 @@ public class ContactPickerPlugin extends CordovaPlugin {
             r.setKeepCallback(true);
             callbackContext.sendPluginResult(r);
             return true;
-		}
+        }else if (action.equals("addContact")) {
 
-		return false;
-	}
+            Intent intent = new Intent(Intents.Insert.ACTION,
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
+            intent.setType(ContactsContract.RawContacts.CONTENT_TYPE);
+            
+            cordova.startActivityForResult(this, intent, INSERT_CONTACT);
+
+            PluginResult r = new PluginResult(PluginResult.Status.NO_RESULT);
+            r.setKeepCallback(true);
+            callbackContext.sendPluginResult(r);
+            return true;
+        }
+
+        return false;
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

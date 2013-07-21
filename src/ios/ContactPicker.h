@@ -9,4 +9,6 @@
 
 - (void) chooseContact:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
 
+- (void) addContact:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+
 @end
