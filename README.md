@@ -1,13 +1,16 @@
 # ContactPicker plugin for Cordova / PhoneGap
 
-This Plugin brings up a native iOS or Android contact-picker overlay, accessing the addressbook and returning the selected contact's name and email.
+This Plugin is inspired from ContactChooser plugin
 
+[here](https://github.com/monday-consulting/ContactChooser)
+
+This Plugin brings up a native iOS or Android contact-picker overlay, accessing the addressbook and returning the selected contact's name and email, also new contact can be added.
 ## Usage
 
 Example Usage
 
 ```js
-window.plugins.ContactChooser.chooseContact(function(contactInfo) {
+window.plugins.ContactPicker.chooseContact(function(contactInfo) {
     alert(contactInfo.displayName + " " + contactInfo.email);
 });
 ```
@@ -23,11 +26,11 @@ The method which will return a JSON. Example:
 
 ## Requirements
 
-This has been successfully tested from Cordova 2.2.0 through to version 2.7.0.
+This has been successfully tested from Cordova 2.2.0 through to version 2.9.0.
 
 ## iOS
 
-### Cordova 2.5.0 - 2.7.0
+### Cordova 2.5.0 - 2.8.0
 In Cordova 2.5.0 the `config.xml` root element has changed to `<widget>`.
 
 ### Cordova 2.3.0 / 2.4.0
@@ -39,7 +42,7 @@ In Cordova 2.3.0 the format of the configuration has changed. The `.plist` based
     ...
 	<plugins>
     	...
-	    <plugin name="ContactChooser" value="ContactChooser"/>
+	    <plugin name="ContactPicker" value="ContactPicker"/>
 		...
     </plugins>
 	...
@@ -48,7 +51,7 @@ In Cordova 2.3.0 the format of the configuration has changed. The `.plist` based
 
 ### Cordova 2.2.0
 
-Cordova 2.2.0 still uses the `Cordova.plist` configuration und thus the plugin has to be added as key value pair in the Plugins section of that file with key `ContactChooser` and value `ContactChooser`.
+Cordova 2.2.0 still uses the `Cordova.plist` configuration und thus the plugin has to be added as key value pair in the Plugins section of that file with key `ContactPicker` and value `ContactPicker`.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
@@ -59,8 +62,8 @@ Cordova 2.2.0 still uses the `Cordova.plist` configuration und thus the plugin h
 	<key>Plugins</key>
 	<dict>
 		...
-		<key>ContactChooser</key>
-		<string>ContactChooser</string>
+		<key>ContactPicker</key>
+		<string>ContactPicker</string>
 	</dict>
 </dict>
 </plist>
@@ -68,7 +71,7 @@ Cordova 2.2.0 still uses the `Cordova.plist` configuration und thus the plugin h
 
 ## Android
 
-First you should maybe customize the package in `ContactChooserPlugin.java`. The plugin has to be registered in the Cordova `config.xml` in the `<plugins>` section, make sure to get the package right:
+First you should maybe customize the package in `ContactPickerPlugin.java`. The plugin has to be registered in the Cordova `config.xml` in the `<plugins>` section, make sure to get the package right:
 
 ```xml
 <?xml version="1.0" encoding="utf-8"?>
@@ -76,7 +79,7 @@ First you should maybe customize the package in `ContactChooserPlugin.java`. The
     ...
     <plugins>
         ...
-        <plugin name="ContactChooser" value="com.mypackage.name.ContactChooserPlugin" />
+        <plugin name="ContactPicker" value="com.mypackage.name.ContactPickerPlugin" />
     </plugins>
 </cordova>
 ```
