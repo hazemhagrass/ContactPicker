@@ -7,7 +7,9 @@ This Plugin is inspired from ContactChooser plugin
 This Plugin brings up a native iOS or Android contact-picker overlay, accessing the addressbook and returning the selected contact's name and email, also new contact can be added.
 ## Usage
 
-Example Usage
+Example Usage: 
+
+1. **Pick contact**
 
 ```js
 window.plugins.ContactPicker.chooseContact(function(contactInfo) {
@@ -23,10 +25,17 @@ The method which will return a JSON. Example:
     email: "john.doe@mail.com"
 }
 ```
+2. **Add new contact**
+
+```js
+ContactPicker.prototype.addContact = function(success, failure){
+    cordova.exec(success, failure, "ContactPicker", "addContact", []);
+};
+```
 
 ## Requirements
 
-This has been successfully tested from Cordova 2.2.0 through to version 2.9.0.
+This has been successfully tested from Cordova 2.2.0 through to version 2.8.0.
 
 ## iOS
 
