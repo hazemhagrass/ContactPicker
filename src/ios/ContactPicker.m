@@ -12,27 +12,27 @@
     [self.viewController presentModalViewController:picker animated:YES];
 }
 
-- (BOOL)peoplePickerNavigationController:(ABPeoplePickerNavigationController*)peoplePicker
-      shouldContinueAfterSelectingPerson:(ABRecordRef)person
-                                property:(ABPropertyID)property
-                              identifier:(ABMultiValueIdentifier)identifier
-{
-    if (kABPersonEmailProperty == property)
-    {
+- (BOOL)peoplePickerNavigationController: (ABPeoplePickerNavigationController *)peoplePicker
+shouldContinueAfterSelectingPerson:(ABRecordRef)person {
+        NSString * firstName, *email;
+        firstName = (__bridge NSString *)ABRecordCopyValue(person, kABPersonFirstNameProperty);
+        
         ABMultiValueRef multi = ABRecordCopyValue(person, kABPersonEmailProperty);
-        int index = ABMultiValueGetIndexForIdentifier(multi, identifier);
-        NSString *email = (NSString *)ABMultiValueCopyValueAtIndex(multi, index);
-        NSString *displayName = (NSString *)ABRecordCopyCompositeName(person);
-
+        if(ABMultiValueGetCount(multi) > 0)
+            email = (__bridge NSString *)ABMultiValueCopyValueAtIndex(multi, 0);
+        else
+            email = @"";
+        
+        
+        NSLog(@"%@ %@", firstName, email);
+        
         NSMutableDictionary* contact = [NSMutableDictionary dictionaryWithCapacity:2];
         [contact setObject:email forKey: @"email"];
-        [contact setObject:displayName forKey: @"displayName"];
-
+        [contact setObject:firstName forKey: @"displayName"];
+        
         [super writeJavascript:[[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:contact] toSuccessCallbackString:self.callbackID]];
         [self.viewController dismissModalViewControllerAnimated:YES];
-        return NO;
-    }
-    return YES;
+    return NO;
 }
 
 - (BOOL) personViewController:(ABPersonViewController*)personView shouldPerformDefaultActionForPerson:(ABRecordRef)person property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifierForValue
