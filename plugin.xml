@@ -34,7 +34,7 @@
     <platform name="ios">
        <config-file target="config.xml" parent="/*">
            <feature name="ContactPicker">
-               <param name="ios-package" value="contact_picker" />
+               <param name="ios-package" value="ContactPicker" />
            </feature>
        </config-file>
 

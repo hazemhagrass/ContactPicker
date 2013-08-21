@@ -7,6 +7,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.PhoneLookup;
 import android.provider.ContactsContract.Intents;
 import android.util.Log;
 
@@ -57,6 +58,7 @@ public class ContactPickerPlugin extends CordovaPlugin {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.v("wapp", "index=" + resultCode);
         if (resultCode == Activity.RESULT_OK) {
 
             Uri contactData = data.getData();
@@ -64,10 +66,12 @@ public class ContactPickerPlugin extends CordovaPlugin {
 
             if (c.moveToFirst()) {
                 try {
+                    int id = c.getInt(c.getColumnIndexOrThrow(PhoneLookup._ID));
                     String name = c.getString(c.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
                     String email = c.getString(c.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Email.DATA));
 
                     JSONObject contact = new JSONObject();
+                    contact.put("id", id);
                     contact.put("email", email);
                     contact.put("displayName", name);
                     callbackContext.success(contact);
