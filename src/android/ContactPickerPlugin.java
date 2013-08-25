@@ -1,4 +1,4 @@
-package com.badrit.contact_picker;
+package com.badrit.ContactPicker;
 
 import android.app.Activity;
 import android.content.ContentUris;
