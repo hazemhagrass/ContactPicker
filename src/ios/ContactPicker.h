@@ -7,8 +7,8 @@
 
 @property(strong) NSString* callbackID;
 
-- (void) chooseContact:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) chooseContact:(CDVInvokedUrlCommand*)command;
 
-- (void) addContact:(NSMutableArray*)arguments withDict:(NSMutableDictionary*)options;
+- (void) addContact:(CDVInvokedUrlCommand*)command;
 
 @end
