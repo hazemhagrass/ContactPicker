@@ -59,9 +59,20 @@
 }
 
 - (void)newPersonViewController:(ABNewPersonViewController *)newPersonView didCompleteWithNewPerson:(ABRecordRef)person{
-    
     NSMutableDictionary *contact;
-    contact = [self convertToDictionary:person];
+    if (person) {
+        contact = [self convertToDictionary:person];
+    }
+    else { // If the user taps cancel, person is passed as NULL. This code block can be moved to convertToDictionary:
+//        contact = @{@"email" : @"",
+//                    @"displayName" : @"",
+//                    @"id" : @""}; // either create a dictionary with the same keys as expected, but with empty strings as values.
+
+//        contact = @{}; //, create an empty dictionary
+        
+//        contact = nil; // or keep it as nil.
+    }
+    
     
     [self respondToJS:contact];
 }
