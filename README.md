@@ -1,8 +1,6 @@
 # ContactPicker plugin for Cordova / PhoneGap
 
-This Plugin is inspired from ContactChooser plugin
-
-[here](https://github.com/monday-consulting/ContactChooser)
+This Plugin is inspired from ContactChooser plugin [here](https://github.com/monday-consulting/ContactChooser)
 
 This Plugin brings up a native iOS or Android contact-picker overlay, accessing the addressbook and returning the selected contact's name and email, also new contact can be added.
 ## Usage
