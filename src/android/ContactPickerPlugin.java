@@ -77,8 +77,9 @@ public class ContactPickerPlugin extends CordovaPlugin {
         try {
             String id = c.getInt(c.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)) + "";
             String name = c.getString(c.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
+
+            //retreive last email for user
             String email = "";
-            
             Cursor emailCur = context.getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?", new String[]{id}, null); 
             while (emailCur.moveToNext()) 
                 email = emailCur.getString(emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
