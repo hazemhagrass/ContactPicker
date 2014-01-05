@@ -28,9 +28,9 @@ The method which will return a JSON. Example:
 2. **Add new contact**
 
 ```js
-ContactPicker.prototype.addContact = function(success, failure){
-    cordova.exec(success, failure, "ContactPicker", "addContact", []);
-};
+window.plugins.ContactPicker.addContact(function(contactInfo) {
+    alert(contactInfo.displayName + " " + contactInfo.email);
+});
 ```
 
 ## MIT Licence
