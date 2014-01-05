@@ -4,6 +4,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="com.badrit.ContactPicker"
     version="0.1.0">
+    <author>Hazem Hagrass</author>
     <name>ContactPicker</name>
     <description>Cordova ContactPicker Plugin</description>
     <license>Apache 2.0</license>
@@ -40,6 +41,9 @@
 
        <header-file src="src/ios/ContactPicker.h" />
        <source-file src="src/ios/ContactPicker.m" />
+
+       <framework src="AddressBook.framework" />
+       <framework src="AddressBookUI.framework" />
    </platform>
 
 </plugin>
