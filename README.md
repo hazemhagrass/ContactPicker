@@ -33,11 +33,16 @@ ContactPicker.prototype.addContact = function(success, failure){
 
 ## Requirements
 
-This has been successfully tested from Cordova 2.2.0 through to version 2.8.0.
+This has been successfully tested from Cordova 2.2.0 through to version 3.1.0.
 
 ## iOS
+### Cordova 3.0.0 - 3.1.0
 
-### Cordova 2.5.0 - 2.8.0
+```js
+phongeap local plugin add https://github.com/hazemhagrass/ContactPicker
+```
+
+### Cordova 2.5.0 - 2.9.0
 In Cordova 2.5.0 the `config.xml` root element has changed to `<widget>`.
 
 ### Cordova 2.3.0 / 2.4.0
