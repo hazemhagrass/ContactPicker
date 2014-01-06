@@ -27,12 +27,13 @@ public class ContactPickerPlugin extends CordovaPlugin {
     private static final int INSERT_CONTACT = 2;
 
     @Override
-    public boolean execute(String action, JSONArray data, CallbackContext callbackContext) {
+    public boolean execute(String action, JSONArray data,
+            CallbackContext callbackContext) {
         this.callbackContext = callbackContext;
         this.context = cordova.getActivity().getApplicationContext();
         if (action.equals("chooseContact")) {
             Intent intent = new Intent(Intent.ACTION_PICK,
-                ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
 
             cordova.startActivityForResult(this, intent, CHOOSE_CONTACT);
 
@@ -40,14 +41,14 @@ public class ContactPickerPlugin extends CordovaPlugin {
             r.setKeepCallback(true);
             callbackContext.sendPluginResult(r);
             return true;
-        }else if (action.equals("addContact")) {
+        } else if (action.equals("addContact")) {
 
             Intent intent = new Intent(ContactsContract.Intents.Insert.ACTION,
-                ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
             intent.setType(ContactsContract.RawContacts.CONTENT_TYPE);
-            
+
             intent.putExtra("finishActivityOnSaveCompleted", true);
-            
+
             cordova.startActivityForResult(this, intent, INSERT_CONTACT);
 
             PluginResult r = new PluginResult(PluginResult.Status.NO_RESULT);
@@ -64,40 +65,65 @@ public class ContactPickerPlugin extends CordovaPlugin {
 
         if (resultCode != Activity.RESULT_OK)
             return;
-        
+
         Uri contactData = data.getData();
-        Cursor c =  context.getContentResolver().query(contactData, null, null, null, null);
+        Cursor c = context.getContentResolver().query(contactData, null, null,
+                null, null);
 
-        if(requestCode == INSERT_CONTACT)
+        String id = "";
+        if (requestCode == INSERT_CONTACT) {
             c.moveToLast();
-
-        else if (requestCode == CHOOSE_CONTACT)
+            id = c.getInt(c.getColumnIndexOrThrow(PhoneLookup._ID)) + "";
+        } else if (requestCode == CHOOSE_CONTACT) {
             c.moveToFirst();
+            id = c.getInt(c
+                    .getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.CONTACT_ID))
+                    + "";
+        }
 
         try {
-            String id = c.getInt(c.getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.CONTACT_ID)) + "";
-            String name = c.getString(c.getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
 
-            //retreive last email for user
+            String name = c
+                    .getString(c
+                            .getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
             String email = "";
-            Cursor emailCur = context.getContentResolver().query(ContactsContract.CommonDataKinds.Email.CONTENT_URI, null, ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?", new String[]{id}, null); 
-            while (emailCur.moveToNext()) 
-                email = emailCur.getString(emailCur.getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
+            String phoneNumber = "";
+
+            Cursor emailCur = context.getContentResolver().query(
+                    ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
+                    ContactsContract.CommonDataKinds.Email.CONTACT_ID + " = ?",
+                    new String[] { id }, null);
+            while (emailCur.moveToNext())
+                email = emailCur
+                        .getString(emailCur
+                                .getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
             emailCur.close();
-            
+
+            Cursor phoneCursor = context.getContentResolver().query(
+                    ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+                    ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
+                    new String[] { id }, null);
+            phoneCursor.moveToFirst();
+            if (phoneCursor.getCount() != 0) {
+                phoneNumber = phoneCursor
+                        .getString(phoneCursor
+                                .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            }
+            phoneCursor.close();
+
             JSONObject contact = new JSONObject();
             contact.put("id", id);
             contact.put("email", email);
             contact.put("displayName", name);
-            
+            contact.put("phoneNumber", phoneNumber);
             callbackContext.success(contact);
 
             c.close();
 
         } catch (Exception e) {
-           Log.v("wapp", "Parsing contact failed: " + e.getMessage());
-           callbackContext.error("Parsing contact failed: " + e.getMessage());
-       }
-   }
+            Log.v("wapp", "Parsing contact failed: " + e.getMessage());
+            callbackContext.error("Parsing contact failed: " + e.getMessage());
+        }
+    }
 
 }
