@@ -2,7 +2,7 @@
 
 This Plugin is inspired from ContactChooser plugin [here](https://github.com/monday-consulting/ContactChooser)
 
-This Plugin brings up a native iOS or Android contact-picker overlay, accessing the addressbook and returning the selected contact's name and email, also new contact can be added.
+This Plugin brings up a native iOS or Android contact-picker overlay, accessing the addressbook and returning the selected contact's name, phone number and email, also new contact can be added.
 ## Usage
 
 This has been successfully tested from Cordova 2.2.0 through to version 3.1.0.
@@ -13,7 +13,7 @@ Example Usage:
 
 ```js
 window.plugins.ContactPicker.chooseContact(function(contactInfo) {
-    alert(contactInfo.displayName + " " + contactInfo.email);
+    alert(contactInfo.displayName + " " + contactInfo.phoneNumber + " " + contactInfo.email);
 });
 ```
 
@@ -22,6 +22,7 @@ The method which will return a JSON. Example:
 ```json
 {
     displayName: "John Doe",
+    phoneNumber: "0123456789",
     email: "john.doe@mail.com"
 }
 ```
@@ -29,7 +30,7 @@ The method which will return a JSON. Example:
 
 ```js
 window.plugins.ContactPicker.addContact(function(contactInfo) {
-    alert(contactInfo.displayName + " " + contactInfo.email);
+    alert(contactInfo.displayName + " " + contactInfo.phoneNumber + " " + contactInfo.email);
 });
 ```
 
