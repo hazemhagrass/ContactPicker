@@ -1,15 +1,12 @@
 package com.badrit.ContactPicker;
 
 import android.app.Activity;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Build;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.PhoneLookup;
-import android.provider.ContactsContract.Intents;
 import android.util.Log;
 
 import org.apache.cordova.CallbackContext;
@@ -87,7 +84,6 @@ public class ContactPickerPlugin extends CordovaPlugin {
                     .getString(c
                             .getColumnIndexOrThrow(ContactsContract.Contacts.DISPLAY_NAME));
             String email = "";
-            String phoneNumber = "";
 
             Cursor emailCur = context.getContentResolver().query(
                     ContactsContract.CommonDataKinds.Email.CONTENT_URI, null,
@@ -99,23 +95,185 @@ public class ContactPickerPlugin extends CordovaPlugin {
                                 .getColumnIndex(ContactsContract.CommonDataKinds.Email.DATA));
             emailCur.close();
 
-            Cursor phoneCursor = context.getContentResolver().query(
+            Cursor phonesCur = context.getContentResolver().query(
                     ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
                     ContactsContract.CommonDataKinds.Phone.CONTACT_ID + " = ?",
                     new String[] { id }, null);
-            phoneCursor.moveToFirst();
-            if (phoneCursor.getCount() != 0) {
-                phoneNumber = phoneCursor
-                        .getString(phoneCursor
-                                .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+            JSONObject phones = new JSONObject();
+            JSONArray homeNumper = new JSONArray();
+            JSONArray mobileNumber = new JSONArray();
+            JSONArray workNumper = new JSONArray();
+            JSONArray faxWorkNumper = new JSONArray();
+            JSONArray faxHomeNumper = new JSONArray();
+            JSONArray pagerNumper = new JSONArray();
+            JSONArray otherNumper = new JSONArray();
+            JSONArray callbackNumper = new JSONArray();
+            JSONArray carNumper = new JSONArray();
+            JSONArray companyMainNumper = new JSONArray();
+            JSONArray isdnNumper = new JSONArray();
+            JSONArray mainNumper = new JSONArray();
+            JSONArray otherFaxNumper = new JSONArray();
+            JSONArray radioNumper = new JSONArray();
+            JSONArray telexNumper = new JSONArray();
+            JSONArray ttyTddNumper = new JSONArray();
+            JSONArray workMobileNumper = new JSONArray();
+            JSONArray workPagerNumper = new JSONArray();
+            JSONArray assistantNumper = new JSONArray();
+            JSONArray mmsNumper = new JSONArray();
+
+            while (phonesCur.moveToNext()) {
+                int type = phonesCur
+                        .getInt(phonesCur
+                                .getColumnIndex(ContactsContract.CommonDataKinds.Phone.TYPE));
+                switch (type) {
+                case ContactsContract.CommonDataKinds.Phone.TYPE_HOME:
+                    homeNumper
+                            .put(phonesCur.getString(phonesCur
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                    phones.put("homeNumper", homeNumper);
+                    break;
+                case ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE:
+                    mobileNumber
+                            .put(phonesCur.getString(phonesCur
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                    phones.put("mobileNumber", mobileNumber);
+                    break;
+                case ContactsContract.CommonDataKinds.Phone.TYPE_WORK:
+                    workNumper
+                            .put(phonesCur.getString(phonesCur
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                    phones.put("workNumper", workNumper);
+                    break;
+                case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_WORK:
+                    faxWorkNumper
+                            .put(phonesCur.getString(phonesCur
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                    phones.put("faxWorkNumper", faxWorkNumper);
+
+                    break;
+                case ContactsContract.CommonDataKinds.Phone.TYPE_FAX_HOME:
+                    faxWorkNumper
+                            .put(phonesCur.getString(phonesCur
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                    phones.put("faxHomeNumper", faxHomeNumper);
+
+                    break;
+                case ContactsContract.CommonDataKinds.Phone.TYPE_PAGER:
+                    pagerNumper
+                            .put(phonesCur.getString(phonesCur
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                    phones.put("pagerNumper", pagerNumper);
+
+                    break;
+                case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER:
+                    otherNumper
+                            .put(phonesCur.getString(phonesCur
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                    phones.put("otherNumper", otherNumper);
+
+                    break;
+                case ContactsContract.CommonDataKinds.Phone.TYPE_CALLBACK:
+                    callbackNumper
+                            .put(phonesCur.getString(phonesCur
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                    phones.put("callbackNumper", callbackNumper);
+
+                    break;
+                case ContactsContract.CommonDataKinds.Phone.TYPE_CAR:
+                    carNumper
+                            .put(phonesCur.getString(phonesCur
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                    phones.put("carNumper", carNumper);
+
+                    break;
+                case ContactsContract.CommonDataKinds.Phone.TYPE_COMPANY_MAIN:
+                    companyMainNumper
+                            .put(phonesCur.getString(phonesCur
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                    phones.put("companyMainNumper", companyMainNumper);
+
+                    break;
+                case ContactsContract.CommonDataKinds.Phone.TYPE_ISDN:
+                    isdnNumper
+                            .put(phonesCur.getString(phonesCur
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                    phones.put("isdnNumper", isdnNumper);
+
+                    break;
+                case ContactsContract.CommonDataKinds.Phone.TYPE_MAIN:
+                    mainNumper
+                            .put(phonesCur.getString(phonesCur
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                    phones.put("mainNumper", mainNumper);
+
+                    break;
+                case ContactsContract.CommonDataKinds.Phone.TYPE_OTHER_FAX:
+                    otherFaxNumper
+                            .put(phonesCur.getString(phonesCur
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                    phones.put("otherFaxNumper", otherFaxNumper);
+
+                    break;
+                case ContactsContract.CommonDataKinds.Phone.TYPE_RADIO:
+                    radioNumper
+                            .put(phonesCur.getString(phonesCur
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                    phones.put("radioNumper", radioNumper);
+
+                    break;
+                case ContactsContract.CommonDataKinds.Phone.TYPE_TELEX:
+                    telexNumper
+                            .put(phonesCur.getString(phonesCur
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                    phones.put("telexNumper", telexNumper);
+
+                    break;
+                case ContactsContract.CommonDataKinds.Phone.TYPE_TTY_TDD:
+                    ttyTddNumper
+                            .put(phonesCur.getString(phonesCur
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                    phones.put("ttyTddNumper", ttyTddNumper);
+
+                    break;
+                case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_MOBILE:
+                    workMobileNumper
+                            .put(phonesCur.getString(phonesCur
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                    phones.put("workMobileNumper", workMobileNumper);
+
+                    break;
+                case ContactsContract.CommonDataKinds.Phone.TYPE_WORK_PAGER:
+                    workPagerNumper
+                            .put(phonesCur.getString(phonesCur
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                    phones.put("workPagerNumper", workPagerNumper);
+
+                    break;
+                case ContactsContract.CommonDataKinds.Phone.TYPE_ASSISTANT:
+                    assistantNumper
+                            .put(phonesCur.getString(phonesCur
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                    phones.put("assistantNumper", assistantNumper);
+
+                    break;
+                case ContactsContract.CommonDataKinds.Phone.TYPE_MMS:
+                    mmsNumper
+                            .put(phonesCur.getString(phonesCur
+                                    .getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)));
+                    phones.put("mmsNumper", mmsNumper);
+
+                    break;
+                }
             }
-            phoneCursor.close();
+
+            phonesCur.close();
 
             JSONObject contact = new JSONObject();
             contact.put("id", id);
             contact.put("email", email);
             contact.put("displayName", name);
-            contact.put("phoneNumber", phoneNumber);
+            contact.put("phones", phones);
+
             callbackContext.success(contact);
 
             c.close();
@@ -125,5 +283,4 @@ public class ContactPickerPlugin extends CordovaPlugin {
             callbackContext.error("Parsing contact failed: " + e.getMessage());
         }
     }
-
 }

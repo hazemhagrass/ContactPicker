@@ -13,7 +13,11 @@ Example Usage:
 
 ```js
 window.plugins.ContactPicker.chooseContact(function(contactInfo) {
-    alert(contactInfo.displayName + " " + contactInfo.phoneNumber + " " + contactInfo.email);
+//to get all mobile number
+    for (var i = 0; i < contactInfo.phones.mobileNumber.length; i++) {
+	     alert(contactInfo.phones.mobileNumber[i]);
+    };
+    alert(contactInfo.displayName + " " + contactInfo.phones.mobileNumber[0] + " " + contactInfo.email);
 });
 ```
 
@@ -22,15 +26,36 @@ The method which will return a JSON. Example:
 ```json
 {
     displayName: "John Doe",
-    phoneNumber: "0123456789",
-    email: "john.doe@mail.com"
+    email: "john.doe@mail.com",
+    phones: {
+      homeNumper: [],
+      mobileNumber: [],
+      workNumper: [],
+      faxWorkNumper: [],
+      faxHomeNumper: [],
+      pagerNumper: [],
+      otherNumper: [],
+      callbackNumper: [],
+      carNumper: [],
+      companyMainNumper: [],
+      isdnNumper: [],
+      mainNumper: [],
+      otherFaxNumper: [],
+      radioNumper: [],
+      telexNumper: [],
+      ttyTddNumper: [],
+      workMobileNumper: [],
+      workPagerNumper: [],
+      assistantNumper: [],
+      mmsNumper: []
+    }
 }
 ```
 2. **Add new contact**
 
 ```js
 window.plugins.ContactPicker.addContact(function(contactInfo) {
-    alert(contactInfo.displayName + " " + contactInfo.phoneNumber + " " + contactInfo.email);
+    alert(contactInfo.displayName + " " + contactInfo.phones.mobileNumber[0] + " " + contactInfo.email);
 });
 ```
 
