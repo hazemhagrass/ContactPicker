@@ -54,7 +54,16 @@ The method which will return a JSON. Example:
 2. **Add new contact**
 
 ```js
-window.plugins.ContactPicker.addContact(function(contactInfo) {
+//you can prefilled variable by add contact object 
+var contact = {};
+contact.displayName = "displayName";
+contact.email = "email";
+contact.mobileNumber = "mobileNumber";
+window.plugins.ContactPicker.addContact(contact, function(contactInfo) {
+    alert(contactInfo.displayName + " " + contactInfo.phones.mobileNumber[0] + " " + contactInfo.email);
+});
+//or you can leave it empty by ad passing null in parameter
+window.plugins.ContactPicker.addContact(null, function(contactInfo) {
     alert(contactInfo.displayName + " " + contactInfo.phones.mobileNumber[0] + " " + contactInfo.email);
 });
 ```
