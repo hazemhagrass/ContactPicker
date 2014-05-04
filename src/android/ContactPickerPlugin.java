@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.ContactsContract;
+import android.provider.ContactsContract.Intents;        
 import android.provider.ContactsContract.PhoneLookup;
 import android.util.Log;
 
@@ -43,6 +44,18 @@ public class ContactPickerPlugin extends CordovaPlugin {
             Intent intent = new Intent(ContactsContract.Intents.Insert.ACTION,
                     ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
             intent.setType(ContactsContract.RawContacts.CONTENT_TYPE);
+
+            try {
+                JSONObject contact = data.getJSONObject(0);
+                if (contact != null) {
+                    intent.putExtra(Intents.Insert.NAME, contact.getString("displayName"));
+                    intent.putExtra(Intents.Insert.EMAIL, contact.getString("email"));
+                    intent.putExtra(Intents.Insert.PHONE_TYPE, ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE);
+                    intent.putExtra(Intents.Insert.PHONE, contact.getString("mobileNumber"));
+                }
+            } catch (Exception ex) {
+            }
+
 
             intent.putExtra("finishActivityOnSaveCompleted", true);
 

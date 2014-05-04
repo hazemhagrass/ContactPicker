@@ -41,7 +41,14 @@ ContactPicker.prototype.chooseContact = function(success, failure) {
 	}, failure, "ContactPicker", "chooseContact", []);
 };
 
-ContactPicker.prototype.addContact = function(success, failure) {
+ContactPicker.prototype.addContact = function(contact, success, failure) {
+	var newContant = null;
+	if (contact && device.platform == "Android")
+		newContant = {
+			displayName: contact.displayName ? contact.displayName : "",
+			email: contact.email ? contact.email : "",
+			mobileNumber: contact.mobileNumber ? contact.mobileNumber : ""
+		}
 	cordova.exec(function(contactInfo) {
 		if (device.platform == "iOS") {
 			var newContactInfo = {
@@ -75,7 +82,7 @@ ContactPicker.prototype.addContact = function(success, failure) {
 		} else {
 			success(contactInfo);
 		}
-	}, failure, "ContactPicker", "addContact", []);
+	}, failure, "ContactPicker", "addContact", [newContant]);
 };
 
 // Plug in to Cordova
