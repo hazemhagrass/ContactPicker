@@ -36,35 +36,16 @@
         email = @"";
     
     ABMultiValueRef multiPhones = ABRecordCopyValue(person, kABPersonPhoneProperty);
-    NSString* phoneNumber;
-    NSString *homePhoneNumber;
-    NSString *homeWorkNumber;
+    
+    NSMutableDictionary* phones = [NSMutableDictionary dictionaryWithCapacity:2];
+    
     for(CFIndex i = 0; i < ABMultiValueGetCount(multiPhones); i++) {
         NSString *label = (__bridge NSString*)ABMultiValueCopyLabelAtIndex(multiPhones, i);
+        
         label = (__bridge NSString*)ABMultiValueCopyLabelAtIndex(multiPhones, i);
-        if([label isEqualToString:(NSString *)kABPersonPhoneMobileLabel]) {
-            phoneNumber = (__bridge NSString*)ABMultiValueCopyValueAtIndex(multiPhones, i);
-            NSLog(@"Phone number: %@", phoneNumber);
-            break;
-        }
-        else if ([label isEqualToString:(NSString *)kABHomeLabel]) {
-            homePhoneNumber = (__bridge NSString*)ABMultiValueCopyValueAtIndex(multiPhones, i);
-        }
-        else if ([label isEqualToString:(NSString *)kABWorkLabel]) {
-            homeWorkNumber = (__bridge NSString*)ABMultiValueCopyValueAtIndex(multiPhones, i);
-        }
-    }
-    
-    if (!phoneNumber) {
-        if (homePhoneNumber) {
-            phoneNumber = homePhoneNumber;
-        }
-        else if (homeWorkNumber) {
-            phoneNumber = homeWorkNumber;
-        }
-        else {
-            phoneNumber = @"";
-        }
+        NSLog(@"Phone Label: %@", label);
+
+        [phones setObject:(__bridge NSString*)ABMultiValueCopyValueAtIndex(multiPhones, i) forKey: label];
     }
     
     NSLog(@"%@ %@", fullName, email);
@@ -74,7 +55,7 @@
     }
     [contact setObject:email forKey: @"email"];
     [contact setObject:fullName forKey: @"displayName"];
-    [contact setObject:phoneNumber forKey:@"phoneNumber"];
+    [contact setObject:phones forKey:@"phones"];
     
     ABRecordID recordID = ABRecordGetRecordID(person); // ABRecordID is a synonym (typedef) for int32_t
     [contact setObject:@(recordID) forKey:@"id"];

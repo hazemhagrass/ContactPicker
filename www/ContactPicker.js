@@ -5,44 +5,24 @@ var ContactPicker = function() {};
 
 
 ContactPicker.prototype.chooseContact = function(success, failure) {
+	var newContantInfo = null;
 	cordova.exec(function(contactInfo) {
-		if (device.platform == "iOS") {
-			var newContactInfo = {
-				displayName: contactInfo.displayName,
-				email: contactInfo.email,
-				phones: {
-					mobileNumber: [contactInfo.phoneNumber],
-					homeNumper: [],
-					mobileNumber: [],
-					workNumper: [],
-					faxWorkNumper: [],
-					faxHomeNumper: [],
-					pagerNumper: [],
-					otherNumper: [],
-					callbackNumper: [],
-					carNumper: [],
-					companyMainNumper: [],
-					isdnNumper: [],
-					mainNumper: [],
-					otherFaxNumper: [],
-					radioNumper: [],
-					telexNumper: [],
-					ttyTddNumper: [],
-					workMobileNumper: [],
-					workPagerNumper: [],
-					assistantNumper: [],
-					mmsNumper: []
-				}
-			};
-			success(newContactInfo);
-		} else {
-			success(contactInfo);
-		}
+		newContantInfo = {
+			displayName: contactInfo.displayName,
+			email: contactInfo.email,
+			phones: []
+		};
+		for (var i in contactInfo.phones) {
+			if (contactInfo.phones[i].length)
+			newContantInfo.phones = newContantInfo.phones.concat(contactInfo.phones[i]);
+		};
+		success(newContantInfo);
 	}, failure, "ContactPicker", "chooseContact", []);
 };
 
 ContactPicker.prototype.addContact = function(contact, success, failure) {
 	var newContant = null;
+	var newContantInfo = null;
 	if (contact && device.platform == "Android")
 		newContant = {
 			displayName: contact.displayName ? contact.displayName : "",
@@ -50,38 +30,16 @@ ContactPicker.prototype.addContact = function(contact, success, failure) {
 			mobileNumber: contact.mobileNumber ? contact.mobileNumber : ""
 		}
 	cordova.exec(function(contactInfo) {
-		if (device.platform == "iOS") {
-			var newContactInfo = {
-				displayName: contactInfo.displayName,
-				email: contactInfo.email,
-				phones: {
-					mobileNumber: [contactInfo.phoneNumber],
-					homeNumper: [],
-					mobileNumber: [],
-					workNumper: [],
-					faxWorkNumper: [],
-					faxHomeNumper: [],
-					pagerNumper: [],
-					otherNumper: [],
-					callbackNumper: [],
-					carNumper: [],
-					companyMainNumper: [],
-					isdnNumper: [],
-					mainNumper: [],
-					otherFaxNumper: [],
-					radioNumper: [],
-					telexNumper: [],
-					ttyTddNumper: [],
-					workMobileNumper: [],
-					workPagerNumper: [],
-					assistantNumper: [],
-					mmsNumper: []
-				}
-			};
-			success(newContactInfo);
-		} else {
-			success(contactInfo);
-		}
+		newContantInfo = {
+			displayName: contactInfo.displayName,
+			email: contactInfo.email,
+			phones: []
+		};
+		for (var i in contactInfo.phones) {
+			if (contactInfo.phones[i].length)
+				newContantInfo.phones.push(contactInfo.phones[i]);
+		};
+		success(newContantInfo);
 	}, failure, "ContactPicker", "addContact", [newContant]);
 };
 

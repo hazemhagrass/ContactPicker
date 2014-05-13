@@ -13,11 +13,11 @@ Example Usage:
 
 ```js
 window.plugins.ContactPicker.chooseContact(function(contactInfo) {
-//to get all mobile number
-    for (var i = 0; i < contactInfo.phones.mobileNumber.length; i++) {
-	     alert(contactInfo.phones.mobileNumber[i]);
+//to get all phones numbers
+    for (var i = 0; i < contactInfo.phones.length; i++) {
+	     alert(contactInfo.phones[i]);
     };
-    alert(contactInfo.displayName + " " + contactInfo.phones.mobileNumber[0] + " " + contactInfo.email);
+    alert(contactInfo.displayName + " " + contactInfo.phones[0] + " " + contactInfo.email);
 });
 ```
 
@@ -27,28 +27,7 @@ The method which will return a JSON. Example:
 {
     displayName: "John Doe",
     email: "john.doe@mail.com",
-    phones: {
-      homeNumper: [],
-      mobileNumber: [],
-      workNumper: [],
-      faxWorkNumper: [],
-      faxHomeNumper: [],
-      pagerNumper: [],
-      otherNumper: [],
-      callbackNumper: [],
-      carNumper: [],
-      companyMainNumper: [],
-      isdnNumper: [],
-      mainNumper: [],
-      otherFaxNumper: [],
-      radioNumper: [],
-      telexNumper: [],
-      ttyTddNumper: [],
-      workMobileNumper: [],
-      workPagerNumper: [],
-      assistantNumper: [],
-      mmsNumper: []
-    }
+    phones: ["numbers"]
 }
 ```
 2. **Add new contact**
@@ -58,13 +37,13 @@ The method which will return a JSON. Example:
 var contact = {};
 contact.displayName = "displayName";
 contact.email = "email";
-contact.mobileNumber = "mobileNumber";
+contact.phoneNumber = "phoneNumber";
 window.plugins.ContactPicker.addContact(contact, function(contactInfo) {
-    alert(contactInfo.displayName + " " + contactInfo.phones.mobileNumber[0] + " " + contactInfo.email);
+    alert(contactInfo.displayName + " " + contactInfo.phones[0] + " " + contactInfo.email);
 });
 //or you can leave it empty by ad passing null in parameter
 window.plugins.ContactPicker.addContact(null, function(contactInfo) {
-    alert(contactInfo.displayName + " " + contactInfo.phones.mobileNumber[0] + " " + contactInfo.email);
+    alert(contactInfo.displayName + " " + contactInfo.phones[0] + " " + contactInfo.email);
 });
 ```
 
