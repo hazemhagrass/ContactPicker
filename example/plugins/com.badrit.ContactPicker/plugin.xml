@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    id="com.badrit.ContactPicker"
+    version="0.1.0">
+    <author>Hazem Hagrass</author>
+    <name>ContactPicker</name>
+    <description>Cordova ContactPicker Plugin</description>
+    <license>Apache 2.0</license>
+    <keywords>cordova,contactpicker</keywords>
+    <dependency id="org.apache.cordova.device" url="https://github.com/apache/cordova-plugin-device.git" />
+
+    <js-module src="www/ContactPicker.js" name="ContactPicker">
+        <clobbers target="navigator.ContactPicker" />
+    </js-module>
+
+    <!-- android -->
+    <platform name="android">
+        <config-file target="res/xml/config.xml" parent="/*">
+            <feature name="ContactPicker">
+                <param name="android-package" value="com.badrit.ContactPicker.ContactPickerPlugin"/>
+            </feature>
+        </config-file>
+        <config-file target="AndroidManifest.xml" parent="/*">
+            <uses-permission android:name="android.permission.READ_CONTACTS"/>
+            <uses-permission android:name="android.permission.WRITE_CONTACTS"/>
+        </config-file>
+
+        <source-file src="src/android/ContactPickerPlugin.java" target-dir="src/com/badrit/ContactPicker/" />
+
+    </platform>
+
+    <!-- ios -->
+    <platform name="ios">
+       <config-file target="config.xml" parent="/*">
+           <feature name="ContactPicker">
+               <param name="ios-package" value="ContactPicker" />
+           </feature>
+       </config-file>
+
+       <header-file src="src/ios/ContactPicker.h" />
+       <source-file src="src/ios/ContactPicker.m" />
+
+       <framework src="AddressBook.framework" />
+       <framework src="AddressBookUI.framework" />
+   </platform>
+
+</plugin>
