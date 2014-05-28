@@ -17,7 +17,7 @@ window.plugins.ContactPicker.chooseContact(function(contactInfo) {
     for (var i = 0; i < contactInfo.phones.length; i++) {
 	     alert(contactInfo.phones[i]);
     };
-    alert(contactInfo.displayName + " " + contactInfo.phones[0] + " " + contactInfo.email);
+    alert(contactInfo.displayName + " " + contactInfo.selectedPhone + " " + contactInfo.phones[0] + " " + contactInfo.email);
 });
 ```
 
@@ -27,6 +27,7 @@ The method which will return a JSON. Example:
 {
     displayName: "John Doe",
     email: "john.doe@mail.com",
+    selectPhone: "(555) 555-5555",
     phones: ["numbers"]
 }
 ```

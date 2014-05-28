@@ -10,6 +10,7 @@ ContactPicker.prototype.chooseContact = function(success, failure) {
 		newContantInfo = {
 			displayName: contactInfo.displayName,
 			email: contactInfo.email,
+			selectedPhone: contactInfo.selectedPhone,
 			phones: []
 		};
 		for (var i in contactInfo.phones) {
