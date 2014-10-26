@@ -101,6 +101,9 @@ shouldContinueAfterSelectingPerson:(ABRecordRef)person {
     return NO;
 }
 
+- (void)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker didSelectPerson:(ABRecordRef)person{
+    [self peoplePickerNavigationController:peoplePicker shouldContinueAfterSelectingPerson:person];
+}
 
 - (BOOL) personViewController:(ABPersonViewController*)personView shouldPerformDefaultActionForPerson:(ABRecordRef)person property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifierForValue
 {
