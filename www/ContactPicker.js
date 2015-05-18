@@ -8,6 +8,7 @@ ContactPicker.prototype.chooseContact = function(success, failure) {
 	var newContantInfo = null;
 	cordova.exec(function(contactInfo) {
 		newContantInfo = {
+			id: contactInfo.id,
 			displayName: contactInfo.displayName,
 			email: contactInfo.email,
 			phones: []
@@ -25,12 +26,14 @@ ContactPicker.prototype.addContact = function(contact, success, failure) {
 	var newContantInfo = null;
 	if (contact && device.platform == "Android")
 		newContant = {
+			id: contact.id ? contact.id  : "",
 			displayName: contact.displayName ? contact.displayName : "",
 			email: contact.email ? contact.email : "",
 			mobileNumber: contact.mobileNumber ? contact.mobileNumber : ""
 		}
 	cordova.exec(function(contactInfo) {
 		newContantInfo = {
+			id: contactInfo.id,
 			displayName: contactInfo.displayName,
 			email: contactInfo.email,
 			phones: []

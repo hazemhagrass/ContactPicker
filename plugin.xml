@@ -3,13 +3,13 @@
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
     id="com.badrit.ContactPicker"
-    version="0.1.0">
+    version="0.2.0">
     <author>Hazem Hagrass</author>
     <name>ContactPicker</name>
     <description>Cordova ContactPicker Plugin</description>
     <license>Apache 2.0</license>
     <keywords>cordova,contactpicker</keywords>
-    <dependency id="org.apache.cordova.device" url="https://github.com/apache/cordova-plugin-device.git" />
+    <dependency id="cordova-plugin-device" version=">=1.0.0" />
 
     <js-module src="www/ContactPicker.js" name="ContactPicker">
         <clobbers target="navigator.ContactPicker" />
