@@ -11,6 +11,7 @@ ContactPicker.prototype.chooseContact = function(success, failure) {
 			id: contactInfo.id,
 			displayName: contactInfo.displayName,
 			email: contactInfo.email,
+			photoUrl: contactInfo.photoUrl,
 			phones: []
 		};
 		for (var i in contactInfo.phones) {
@@ -36,6 +37,7 @@ ContactPicker.prototype.addContact = function(contact, success, failure) {
 			id: contactInfo.id,
 			displayName: contactInfo.displayName,
 			email: contactInfo.email,
+			photoUrl: contactInfo.photoUrl,
 			phones: []
 		};
 		for (var i in contactInfo.phones) {
