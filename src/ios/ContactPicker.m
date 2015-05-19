@@ -22,6 +22,23 @@
     [self.viewController presentViewController:navigationController animated:YES completion:nil];
 }
 
+- (NSString *)imageURLForRecord:(ABRecordRef)person fullName:(NSString *)fullName {
+    CFDataRef imageData = ABPersonCopyImageData(person);
+    if (!imageData) {
+        return @"";
+    }
+    NSData *data = (__bridge NSData *)(imageData);
+    
+    NSString *tmpDirectory = NSTemporaryDirectory();
+    NSString *fileName = [NSString stringWithFormat:@"%@_image.png", [fullName isEqualToString:@""] ? [NSDate date] : fullName];
+    NSString *imagePath = [tmpDirectory stringByAppendingPathComponent:fileName];
+    [data writeToFile:imagePath atomically:YES];
+    
+    CFRelease(imageData);
+    
+    return [NSURL fileURLWithPath:imagePath].absoluteString;
+}
+
 - (NSMutableDictionary *)convertToDictionary:(ABRecordRef)person {
     NSString *fullName, *email;
     fullName = (__bridge NSString*)ABRecordCopyCompositeName(person);
@@ -48,6 +65,8 @@
         [phones setObject:(__bridge NSString*)ABMultiValueCopyValueAtIndex(multiPhones, i) forKey: label];
     }
     
+    NSString *imageURL = [self imageURLForRecord:person fullName:fullName];
+    
     NSLog(@"%@ %@", fullName, email);
     
     NSMutableDictionary* contact = [NSMutableDictionary dictionaryWithCapacity:2];
@@ -56,6 +75,7 @@
     [contact setObject:email forKey: @"email"];
     [contact setObject:fullName forKey: @"displayName"];
     [contact setObject:phones forKey:@"phones"];
+    contact[@"photoUrl"] = imageURL;
     
     ABRecordID recordID = ABRecordGetRecordID(person); // ABRecordID is a synonym (typedef) for int32_t
     [contact setObject:@(recordID) forKey:@"id"];
