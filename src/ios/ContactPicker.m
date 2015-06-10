@@ -65,6 +65,27 @@
         [phones setObject:(__bridge NSString*)ABMultiValueCopyValueAtIndex(multiPhones, i) forKey: label];
     }
     
+    ABMultiValueRef multiAddresses = ABRecordCopyValue(person, kABPersonAddressProperty);
+    NSMutableArray *addresses = [NSMutableArray array];
+    
+    for (CFIndex i = 0; i < ABMultiValueGetCount(multiAddresses); i++) {
+        NSDictionary *dictionary = (__bridge NSDictionary *)(ABMultiValueCopyValueAtIndex(multiAddresses, i));
+        
+        NSArray *keys = @[(__bridge NSString *)kABPersonAddressStreetKey, (__bridge NSString *)kABPersonAddressCityKey,
+                          (__bridge NSString *)kABPersonAddressStateKey, (__bridge NSString *)kABPersonAddressCountryKey];
+        
+        NSMutableArray *values = [NSMutableArray array];
+        
+        for (NSString *key in keys) {
+            NSString *value = dictionary[key];
+            if (![value isEqualToString:@""]) {
+                [values addObject:value];
+            }
+        }
+        
+        [addresses addObject:[values componentsJoinedByString:@", "]];
+    }
+    
     NSString *imageURL = [self imageURLForRecord:person fullName:fullName];
     
     NSLog(@"%@ %@", fullName, email);
@@ -76,6 +97,7 @@
     [contact setObject:fullName forKey: @"displayName"];
     [contact setObject:phones forKey:@"phones"];
     contact[@"photoUrl"] = imageURL;
+    contact[@"addresses"] = addresses;
     
     ABRecordID recordID = ABRecordGetRecordID(person); // ABRecordID is a synonym (typedef) for int32_t
     [contact setObject:@(recordID) forKey:@"id"];
