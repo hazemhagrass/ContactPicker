@@ -97,7 +97,7 @@
     [contact setObject:fullName forKey: @"displayName"];
     [contact setObject:phones forKey:@"phones"];
     contact[@"photoUrl"] = imageURL;
-    contact[@"addresses"] = addresses;
+    contact[@"address"] = addresses;
     
     ABRecordID recordID = ABRecordGetRecordID(person); // ABRecordID is a synonym (typedef) for int32_t
     [contact setObject:@(recordID) forKey:@"id"];
