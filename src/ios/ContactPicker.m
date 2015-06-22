@@ -78,7 +78,7 @@
         
         for (NSString *key in keys) {
             NSString *value = dictionary[key];
-            if (![value isEqualToString:@""]) {
+            if (value && ![value isEqualToString:@""]) {
                 [values addObject:value];
             }
         }
