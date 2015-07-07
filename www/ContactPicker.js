@@ -19,7 +19,7 @@ ContactPicker.prototype.chooseContact = function(success, failure) {
 			if (contactInfo.phones[i].length)
 			newContantInfo.phones = newContantInfo.phones.concat(contactInfo.phones[i]);
 		};
-		if(contactInfo.address.length){
+		if(contactInfo.address && contactInfo.address.length){
 			for (var i in contactInfo.address) {
 				newContantInfo.address.push(contactInfo.address[i]);
 			};
