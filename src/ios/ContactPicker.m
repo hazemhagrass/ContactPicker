@@ -7,6 +7,27 @@
 - (void) chooseContact:(CDVInvokedUrlCommand*)command{
     self.callbackID = command.callbackId;
     
+    [self requestAccess:^{
+        [self showPeoplePickerNavigationController];
+    }];
+}
+
+- (void)requestAccess:(void (^)(void))callback {
+    [self requestAccessWithCallback:^(BOOL success) {
+        if (success) {
+            if (callback) {
+                callback();
+            }
+        }
+        else {
+            [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                                     messageAsString:@"People picker denied access"]
+                                        callbackId:self.callbackID];
+        }
+    }];
+}
+
+- (void)showPeoplePickerNavigationController {
     ABPeoplePickerNavigationController *picker = [[ABPeoplePickerNavigationController alloc] init];
     picker.peoplePickerDelegate = self;
     [self.viewController presentModalViewController:picker animated:YES];
@@ -15,11 +36,39 @@
 - (void)addContact:(CDVInvokedUrlCommand *)command{
     self.callbackID = command.callbackId;
     
+    [self requestAccess:^{
+        [self showNewPersonViewController];
+    }];
+}
+
+- (void)showNewPersonViewController {
     ABNewPersonViewController *newPersonController = [[ABNewPersonViewController alloc] init];
     newPersonController.newPersonViewDelegate = self;
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:newPersonController];
     
     [self.viewController presentViewController:navigationController animated:YES completion:nil];
+}
+
+- (void)requestAccessWithCallback:(void (^)(BOOL success))callback {
+    ABAddressBookRef addressBookRef = ABAddressBookCreateWithOptions(NULL, NULL);
+    
+    if (ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusNotDetermined) {
+        ABAddressBookRequestAccessWithCompletion(addressBookRef, ^(bool granted, CFErrorRef error) {
+            if (callback) {
+                callback(granted);
+            }
+        });
+    }
+    else if (ABAddressBookGetAuthorizationStatus() == kABAuthorizationStatusAuthorized) {
+        if (callback) {
+            callback(YES);
+        }
+    }
+    else {
+        if (callback) {
+            callback(NO);
+        }
+    }
 }
 
 - (NSString *)imageURLForRecord:(ABRecordRef)person fullName:(NSString *)fullName {
@@ -66,9 +115,13 @@
     }
     
     ABMultiValueRef multiAddresses = ABRecordCopyValue(person, kABPersonAddressProperty);
-    NSMutableArray *addresses = [NSMutableArray array];
+    NSMutableDictionary* address = [NSMutableDictionary dictionaryWithCapacity:2];
     
     for (CFIndex i = 0; i < ABMultiValueGetCount(multiAddresses); i++) {
+        NSString *label = (__bridge NSString*)ABMultiValueCopyLabelAtIndex(multiAddresses, i);
+        
+        label = (__bridge NSString*)ABMultiValueCopyLabelAtIndex(multiAddresses, i);
+        NSLog(@"Phone Label: %@", label);
         NSDictionary *dictionary = (__bridge NSDictionary *)(ABMultiValueCopyValueAtIndex(multiAddresses, i));
         
         NSArray *keys = @[(__bridge NSString *)kABPersonAddressStreetKey, (__bridge NSString *)kABPersonAddressCityKey,
@@ -83,7 +136,7 @@
             }
         }
         
-        [addresses addObject:[values componentsJoinedByString:@", "]];
+        [address setObject:[values componentsJoinedByString:@", "]forKey: label];
     }
     
     NSString *imageURL = [self imageURLForRecord:person fullName:fullName];
@@ -96,8 +149,8 @@
     [contact setObject:email forKey: @"email"];
     [contact setObject:fullName forKey: @"displayName"];
     [contact setObject:phones forKey:@"phones"];
+    [contact setObject:address forKey:@"address"];
     contact[@"photoUrl"] = imageURL;
-    contact[@"address"] = addresses;
     
     ABRecordID recordID = ABRecordGetRecordID(person); // ABRecordID is a synonym (typedef) for int32_t
     [contact setObject:@(recordID) forKey:@"id"];
