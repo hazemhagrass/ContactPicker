@@ -4,15 +4,43 @@
 @implementation ContactPicker
 @synthesize callbackID;
 
+#pragma mark - Public interface
+
 - (void) chooseContact:(CDVInvokedUrlCommand*)command{
     self.callbackID = command.callbackId;
     
-    [self requestAccess:^{
+    [self checkAdressBookAccessWithCallback:^{
         [self showPeoplePickerNavigationController];
     }];
 }
 
-- (void)requestAccess:(void (^)(void))callback {
+- (void)addContact:(CDVInvokedUrlCommand *)command{
+    self.callbackID = command.callbackId;
+    
+    [self checkAdressBookAccessWithCallback:^{
+        [self showNewPersonViewController];
+    }];
+}
+
+#pragma mark - Showing Address Book view controllers
+
+- (void)showPeoplePickerNavigationController {
+    ABPeoplePickerNavigationController *picker = [[ABPeoplePickerNavigationController alloc] init];
+    picker.peoplePickerDelegate = self;
+    [self.viewController presentViewController:picker animated:YES completion:nil];
+}
+
+- (void)showNewPersonViewController {
+    ABNewPersonViewController *newPersonController = [[ABNewPersonViewController alloc] init];
+    newPersonController.newPersonViewDelegate = self;
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:newPersonController];
+    
+    [self.viewController presentViewController:navigationController animated:YES completion:nil];
+}
+
+#pragma mark - Address Book Access
+
+- (void)checkAdressBookAccessWithCallback:(void (^)(void))callback {
     [self requestAccessWithCallback:^(BOOL success) {
         if (success) {
             if (callback) {
@@ -25,28 +53,6 @@
                                         callbackId:self.callbackID];
         }
     }];
-}
-
-- (void)showPeoplePickerNavigationController {
-    ABPeoplePickerNavigationController *picker = [[ABPeoplePickerNavigationController alloc] init];
-    picker.peoplePickerDelegate = self;
-    [self.viewController presentViewController:picker animated:YES completion:nil];
-}
-
-- (void)addContact:(CDVInvokedUrlCommand *)command{
-    self.callbackID = command.callbackId;
-    
-    [self requestAccess:^{
-        [self showNewPersonViewController];
-    }];
-}
-
-- (void)showNewPersonViewController {
-    ABNewPersonViewController *newPersonController = [[ABNewPersonViewController alloc] init];
-    newPersonController.newPersonViewDelegate = self;
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:newPersonController];
-    
-    [self.viewController presentViewController:navigationController animated:YES completion:nil];
 }
 
 - (void)requestAccessWithCallback:(void (^)(BOOL success))callback {
@@ -70,6 +76,56 @@
         }
     }
 }
+
+#pragma mark - Delegate calls
+
+- (void)newPersonViewController:(ABNewPersonViewController *)newPersonView didCompleteWithNewPerson:(ABRecordRef)person{
+    NSMutableDictionary *contact;
+    if (person) {
+        contact = [self convertToDictionary:person];
+    }
+    else { // If the user taps cancel, person is passed as NULL. This code block can be moved to convertToDictionary:
+        //        contact = @{@"email" : @"",
+        //                    @"displayName" : @"",
+        //                    @"id" : @""}; // either create a dictionary with the same keys as expected, but with empty strings as values.
+        
+        //        contact = @{}; //, create an empty dictionary
+        
+        //        contact = nil; // or keep it as nil.
+    }
+    
+    
+    [self respondToJS:contact];
+}
+
+- (BOOL)peoplePickerNavigationController: (ABPeoplePickerNavigationController *)peoplePicker
+      shouldContinueAfterSelectingPerson:(ABRecordRef)person {
+    
+    NSMutableDictionary *contact;
+    contact = [self convertToDictionary:person];
+    
+    [self respondToJS:contact];
+    
+    return NO;
+}
+
+- (void)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker didSelectPerson:(ABRecordRef)person{
+    [self peoplePickerNavigationController:peoplePicker shouldContinueAfterSelectingPerson:person];
+}
+
+- (BOOL) personViewController:(ABPersonViewController*)personView shouldPerformDefaultActionForPerson:(ABRecordRef)person property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifierForValue
+{
+    return YES;
+}
+
+- (void)peoplePickerNavigationControllerDidCancel:(ABPeoplePickerNavigationController *)peoplePicker{
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                             messageAsString:@"People picker abort"]
+                                callbackId:self.callbackID];
+    [self.viewController dismissViewControllerAnimated:YES completion:nil];
+}
+
+#pragma mark - Parsing Used Data
 
 - (NSString *)imageURLForRecord:(ABRecordRef)person fullName:(NSString *)fullName {
     CFDataRef imageData = ABPersonCopyImageData(person);
@@ -157,6 +213,8 @@
     return contact;
 }
 
+#pragma mark - Response
+
 - (void)respondToJS:(NSMutableDictionary *)contact {
     [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:contact]
                                 callbackId:self.callbackID];
@@ -165,52 +223,6 @@
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:contact];
     
     [self.commandDelegate sendPluginResult:pluginResult callbackId:self.callbackID];
-}
-
-- (void)newPersonViewController:(ABNewPersonViewController *)newPersonView didCompleteWithNewPerson:(ABRecordRef)person{
-    NSMutableDictionary *contact;
-    if (person) {
-        contact = [self convertToDictionary:person];
-    }
-    else { // If the user taps cancel, person is passed as NULL. This code block can be moved to convertToDictionary:
-//        contact = @{@"email" : @"",
-//                    @"displayName" : @"",
-//                    @"id" : @""}; // either create a dictionary with the same keys as expected, but with empty strings as values.
-
-//        contact = @{}; //, create an empty dictionary
-        
-//        contact = nil; // or keep it as nil.
-    }
-    
-    
-    [self respondToJS:contact];
-}
-
-- (BOOL)peoplePickerNavigationController: (ABPeoplePickerNavigationController *)peoplePicker
-shouldContinueAfterSelectingPerson:(ABRecordRef)person {
-    
-    NSMutableDictionary *contact;
-    contact = [self convertToDictionary:person];
-    
-    [self respondToJS:contact];
-    
-    return NO;
-}
-
-- (void)peoplePickerNavigationController:(ABPeoplePickerNavigationController *)peoplePicker didSelectPerson:(ABRecordRef)person{
-    [self peoplePickerNavigationController:peoplePicker shouldContinueAfterSelectingPerson:person];
-}
-
-- (BOOL) personViewController:(ABPersonViewController*)personView shouldPerformDefaultActionForPerson:(ABRecordRef)person property:(ABPropertyID)property identifier:(ABMultiValueIdentifier)identifierForValue
-{
-    return YES;
-}
-
-- (void)peoplePickerNavigationControllerDidCancel:(ABPeoplePickerNavigationController *)peoplePicker{
-    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-                                                             messageAsString:@"People picker abort"]
-                                callbackId:self.callbackID];
-    [self.viewController dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end
