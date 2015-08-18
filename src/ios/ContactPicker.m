@@ -30,7 +30,7 @@
 - (void)showPeoplePickerNavigationController {
     ABPeoplePickerNavigationController *picker = [[ABPeoplePickerNavigationController alloc] init];
     picker.peoplePickerDelegate = self;
-    [self.viewController presentModalViewController:picker animated:YES];
+    [self.viewController presentViewController:picker animated:YES completion:nil];
 }
 
 - (void)addContact:(CDVInvokedUrlCommand *)command{
@@ -158,8 +158,9 @@
 }
 
 - (void)respondToJS:(NSMutableDictionary *)contact {
-    [super writeJavascript:[[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:contact] toSuccessCallbackString:self.callbackID]];
-    [self.viewController dismissModalViewControllerAnimated:YES];
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:contact]
+                                callbackId:self.callbackID];
+    [self.viewController dismissViewControllerAnimated:YES completion:nil];
     
     CDVPluginResult* pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:contact];
     
@@ -206,10 +207,10 @@ shouldContinueAfterSelectingPerson:(ABRecordRef)person {
 }
 
 - (void)peoplePickerNavigationControllerDidCancel:(ABPeoplePickerNavigationController *)peoplePicker{
-    [self.viewController dismissModalViewControllerAnimated:YES];
-    [super writeJavascript:[[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
-      messageAsString:@"People picker abort"]
-    toErrorCallbackString:self.callbackID]];
+    [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR
+                                                             messageAsString:@"People picker abort"]
+                                callbackId:self.callbackID];
+    [self.viewController dismissViewControllerAnimated:YES completion:nil];
 }
 
 @end
