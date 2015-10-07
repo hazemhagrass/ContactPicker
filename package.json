@@ -1,0 +1,25 @@
+{
+  "name": "com-badrit-contactpicker",
+  "version": "0.3.0",
+  "description": "Cordova ContactPicker Plugin",
+  "cordova": {
+    "id": "com-badrit-contactpicker",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hazemhagrass/ContactPicker"
+  },
+  "keywords": [
+    "cordova",
+    "contact",
+    "contactpicker",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios"
+  ],
+  "license": "MIT"
+}

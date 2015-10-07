@@ -2,8 +2,8 @@
 
 <plugin xmlns="http://www.phonegap.com/ns/plugins/1.0"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    id="com.badrit.ContactPicker"
-    version="0.2.0">
+    id="com-badrit-contactpicker"
+    version="0.3.0">
     <author>Hazem Hagrass</author>
     <name>ContactPicker</name>
     <description>Cordova ContactPicker Plugin</description>
