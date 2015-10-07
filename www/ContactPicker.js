@@ -13,6 +13,7 @@ ContactPicker.prototype.chooseContact = function(success, failure) {
 			email: contactInfo.email,
 			photoUrl: contactInfo.photoUrl,
 			address: [],
+			selectedPhone: contactInfo.selectedPhone,
 			phones: []
 		};
 		for (var i in contactInfo.phones) {

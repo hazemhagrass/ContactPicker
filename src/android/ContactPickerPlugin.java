@@ -91,6 +91,7 @@ public class ContactPickerPlugin extends CordovaPlugin {
                 null, null);
 
         String id = "";
+        String selectedPhone = "";
         if (requestCode == INSERT_CONTACT) {
             c.moveToLast();
             id = c.getInt(c.getColumnIndexOrThrow(PhoneLookup._ID)) + "";
@@ -99,6 +100,7 @@ public class ContactPickerPlugin extends CordovaPlugin {
             id = c.getInt(c
                     .getColumnIndexOrThrow(ContactsContract.CommonDataKinds.Phone.CONTACT_ID))
                     + "";
+            selectedPhone = c.getString(c.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
         }
 
         try {
@@ -113,6 +115,7 @@ public class ContactPickerPlugin extends CordovaPlugin {
             contact.put("displayName", name);
             contact.put("phones", phones);
             contact.put("photoUrl", photoUrl);
+            contact.put("selectedPhone", selectedPhone);
 
             callbackContext.success(contact);
 
