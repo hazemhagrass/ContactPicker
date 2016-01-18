@@ -16,9 +16,10 @@
 
 - (void)addContact:(CDVInvokedUrlCommand *)command{
     self.callbackID = command.callbackId;
+    NSDictionary* contactDict = [command argumentAtIndex:0];
     
     [self checkAdressBookAccessWithCallback:^{
-        [self showNewPersonViewController];
+        [self showNewPersonViewController:contactDict];
     }];
 }
 
@@ -30,8 +31,26 @@
     [self.viewController presentViewController:picker animated:YES completion:nil];
 }
 
-- (void)showNewPersonViewController {
+- (void)showNewPersonViewController:(NSDictionary*)contactDict {
+    // Create the pre-filled properties
+    ABRecordRef newPerson = ABPersonCreate();
+    CFErrorRef error = NULL;
+    
+    //add value "nickname" to newPerson as PersonFirstNameProperty
+    NSString *name = [contactDict valueForKey:@"nickname"];
+    ABRecordSetValue(newPerson, kABPersonFirstNameProperty, (__bridge CFTypeRef) name, &error);
+    
+    //Get phoneNumber from "phoneNumbers" array and att to newPerson as PersonPhoneProperty
+    NSArray *phoneNumbers = [contactDict valueForKey:@"phoneNumbers"];
+    NSString *phoneNumber = [phoneNumbers[0] valueForKey:@"value"];
+    //Phone number is a list of phone number, so create a multivalue
+    ABMutableMultiValueRef phoneNumberMultiValue  = ABMultiValueCreateMutable(kABMultiStringPropertyType);
+    ABMultiValueAddValueAndLabel(phoneNumberMultiValue, (__bridge CFTypeRef) phoneNumber, kABPersonPhoneMobileLabel, NULL);
+    ABRecordSetValue(newPerson, kABPersonPhoneProperty, phoneNumberMultiValue, NULL); // set the phone number property
+    
+    NSAssert( !error, @"Something bad happened here." );
     ABNewPersonViewController *newPersonController = [[ABNewPersonViewController alloc] init];
+    [newPersonController setDisplayedPerson:newPerson];
     newPersonController.newPersonViewDelegate = self;
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:newPersonController];
     
