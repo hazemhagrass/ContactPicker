@@ -73,5 +73,3 @@ cordova.addConstructor(function() {
 	if (!window.plugins) window.plugins = {};
 	window.plugins.ContactPicker = new ContactPicker();
 });
-
-});
