@@ -32,11 +32,12 @@ ContactPicker.prototype.chooseContact = function(success, failure) {
 };
 
 ContactPicker.prototype.addContact = function(contact, success, failure) {
-	//set default values
-	contact.id = contact.id ? contact.id : "";
-	contact.displayName = contact.displayName ? contact.displayName : "";
-	contact.email = contact.email ? contact.email : "";
-	contact.mobileNumber = contact.mobileNumber ? contact.mobileNumber : "";
+	var newContact = {};
+	newContact.id = contact.id ? contact.id : "";
+	newContact.email = contact.email ? contact.email : "";
+	newContact.displayName = contact.displayName ? contact.displayName : "";
+	newContact.nickname = contact.nickname ? contact.nickname : "";
+	newContact.mobileNumber = contact.mobileNumber ? contact.mobileNumber : "";
 	cordova.exec(function(contactInfo) {
 		newContantInfo = {
 			id: contactInfo.id,
@@ -58,7 +59,7 @@ ContactPicker.prototype.addContact = function(contact, success, failure) {
 			newContantInfo.address.push("")
 		}
 		success(newContantInfo);
-	}, failure, "ContactPicker", "addContact", contact);
+	}, failure, "ContactPicker", "addContact", [newContact]);
 };
 
 // Plug in to Cordova
@@ -71,4 +72,6 @@ cordova.addConstructor(function() {
 
 	if (!window.plugins) window.plugins = {};
 	window.plugins.ContactPicker = new ContactPicker();
+});
+
 });

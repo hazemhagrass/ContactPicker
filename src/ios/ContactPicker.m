@@ -39,16 +39,13 @@
     //add value "nickname" to newPerson as PersonFirstNameProperty
     NSString *name = [contactDict valueForKey:@"nickname"];
     ABRecordSetValue(newPerson, kABPersonFirstNameProperty, (__bridge CFTypeRef) name, &error);
-    
-    //Get phoneNumber from "phoneNumbers" array and att to newPerson as PersonPhoneProperty
-    NSArray *phoneNumbers = [contactDict valueForKey:@"phoneNumbers"];
-    NSString *phoneNumber = [phoneNumbers[0] valueForKey:@"value"];
-    //Phone number is a list of phone number, so create a multivalue
+
+    //add value "mobileNumber" to newPerson as MultiValueRef
+    NSString *phoneNumber = [contactDict valueForKey:@"mobileNumber"];
     ABMutableMultiValueRef phoneNumberMultiValue  = ABMultiValueCreateMutable(kABMultiStringPropertyType);
     ABMultiValueAddValueAndLabel(phoneNumberMultiValue, (__bridge CFTypeRef) phoneNumber, kABPersonPhoneMobileLabel, NULL);
     ABRecordSetValue(newPerson, kABPersonPhoneProperty, phoneNumberMultiValue, NULL); // set the phone number property
-    
-    NSAssert( !error, @"Something bad happened here." );
+
     ABNewPersonViewController *newPersonController = [[ABNewPersonViewController alloc] init];
     [newPersonController setDisplayedPerson:newPerson];
     newPersonController.newPersonViewDelegate = self;
