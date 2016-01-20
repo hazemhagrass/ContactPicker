@@ -71,7 +71,7 @@ public class ContactPickerPlugin extends CordovaPlugin {
 
             cordova.startActivityForResult(this, intent, INSERT_CONTACT);
 
-            PluginResult r = new PluginResult(PluginResult.Status.NO_RESULT);
+            PluginResult r = new PluginResult(PluginResult.Status.OK);
             r.setKeepCallback(true);
             callbackContext.sendPluginResult(r);
             return true;
