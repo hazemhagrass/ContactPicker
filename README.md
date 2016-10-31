@@ -50,14 +50,15 @@ window.plugins.ContactPicker.addContact(null, function(contactInfo) {
 ## Installation 
 
 for Cordova >= 3.0.0
-
+```js
 phonegap local plugin add https://github.com/hazemhagrass/ContactPicker.git
-
 cordova plugin add https://github.com/hazemhagrass/ContactPicker.git
+```
 
 for Cordova >= 5.0.0
-
+```js
 cordova plugin add com-badrit-contactpicker
+```
 
 ## MIT Licence
 
