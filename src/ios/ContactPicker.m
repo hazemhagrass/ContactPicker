@@ -45,6 +45,12 @@
     ABMutableMultiValueRef phoneNumberMultiValue  = ABMultiValueCreateMutable(kABMultiStringPropertyType);
     ABMultiValueAddValueAndLabel(phoneNumberMultiValue, (__bridge CFTypeRef) phoneNumber, kABPersonPhoneMobileLabel, NULL);
     ABRecordSetValue(newPerson, kABPersonPhoneProperty, phoneNumberMultiValue, NULL); // set the phone number property
+    
+    //add value "mail" to newPerson as MultiValueRef
+    NSString *emailAddress = [contactDict valueForKey:@"email"];
+    ABMutableMultiValueRef mailMultiValue  = ABMultiValueCreateMutable(kABMultiStringPropertyType);
+    ABMultiValueAddValueAndLabel(mailMultiValue, (__bridge CFTypeRef) emailAddress, kABWorkLabel, NULL);
+    ABRecordSetValue(newPerson, kABPersonEmailProperty, mailMultiValue, NULL); // set the email address property
 
     ABNewPersonViewController *newPersonController = [[ABNewPersonViewController alloc] init];
     [newPersonController setDisplayedPerson:newPerson];
