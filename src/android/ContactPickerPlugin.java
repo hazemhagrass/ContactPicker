@@ -32,18 +32,21 @@ public class ContactPickerPlugin extends CordovaPlugin {
 
     private Context context;
     private CallbackContext callbackContext;
-
+    private JSONArray executeArgs;
+    
     private static final int CHOOSE_CONTACT = 1;
     private static final int INSERT_CONTACT = 2;
     
     public static final String WRITE = Manifest.permission.WRITE_CONTACTS;
-     public static final int SAVE_REQ_CODE = 1;
+    public static final int SAVE_REQ_CODE = 1;
 
     @Override
     public boolean execute(String action, JSONArray data,
                            CallbackContext callbackContext) {
         this.callbackContext = callbackContext;
         this.context = cordova.getActivity().getApplicationContext();
+        this.executeArgs = data;
+        
         if (action.equals("chooseContact")) {
             Intent intent = new Intent(Intent.ACTION_PICK,
                     ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
@@ -58,12 +61,28 @@ public class ContactPickerPlugin extends CordovaPlugin {
 
             if(PermissionHelper.hasPermission(this, WRITE))
             {                
-                Intent intent = new Intent(ContactsContract.Intents.Insert.ACTION,
+                addContact();
+                
+                return true;
+                
+            } else {
+                
+                PermissionHelper.requestPermission(this, SAVE_REQ_CODE, WRITE);
+                
+                return true;
+            }
+        }
+
+        return false;
+    }
+    
+    private void addContact(){
+        Intent intent = new Intent(ContactsContract.Intents.Insert.ACTION,
                         ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
                 intent.setType(ContactsContract.RawContacts.CONTENT_TYPE);
 
                 try {
-                    JSONObject contact = data.getJSONObject(0);
+                    JSONObject contact = this.executeArgs.getJSONObject(0);
                     if (contact != null) {
                         intent.putExtra(Intents.Insert.NAME, contact.getString("displayName"));
                         intent.putExtra(Intents.Insert.EMAIL, contact.getString("email"));
@@ -80,18 +99,15 @@ public class ContactPickerPlugin extends CordovaPlugin {
 
                 PluginResult r = new PluginResult(PluginResult.Status.OK);
                 r.setKeepCallback(true);
-                callbackContext.sendPluginResult(r);
-                
-                return true;
-            } else {
-                
-                PermissionHelper.requestPermission(this, SAVE_REQ_CODE, WRITE);
-                
-                return false;
-            }
+                this.callbackContext.sendPluginResult(r);
+    }
+    
+    public void onRequestPermissionResult(int requestCode, String[] permissions,
+                                             int[] grantResults) throws JSONException {
+        
+        if(requestCode == SAVE_REQ_CODE) {
+            addContact();
         }
-
-        return false;
     }
 
     @Override
