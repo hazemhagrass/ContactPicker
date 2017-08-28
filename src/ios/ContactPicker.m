@@ -16,9 +16,10 @@
 
 - (void)addContact:(CDVInvokedUrlCommand *)command{
     self.callbackID = command.callbackId;
+    NSDictionary* contactDict = [command argumentAtIndex:0];
     
     [self checkAdressBookAccessWithCallback:^{
-        [self showNewPersonViewController];
+        [self showNewPersonViewController:contactDict];
     }];
 }
 
@@ -30,8 +31,29 @@
     [self.viewController presentViewController:picker animated:YES completion:nil];
 }
 
-- (void)showNewPersonViewController {
+- (void)showNewPersonViewController:(NSDictionary*)contactDict {
+    // Create the pre-filled properties
+    ABRecordRef newPerson = ABPersonCreate();
+    CFErrorRef error = NULL;
+    
+    //add value "nickname" to newPerson as PersonFirstNameProperty
+    NSString *name = [contactDict valueForKey:@"nickname"];
+    ABRecordSetValue(newPerson, kABPersonFirstNameProperty, (__bridge CFTypeRef) name, &error);
+
+    //add value "mobileNumber" to newPerson as MultiValueRef
+    NSString *phoneNumber = [contactDict valueForKey:@"mobileNumber"];
+    ABMutableMultiValueRef phoneNumberMultiValue  = ABMultiValueCreateMutable(kABMultiStringPropertyType);
+    ABMultiValueAddValueAndLabel(phoneNumberMultiValue, (__bridge CFTypeRef) phoneNumber, kABPersonPhoneMobileLabel, NULL);
+    ABRecordSetValue(newPerson, kABPersonPhoneProperty, phoneNumberMultiValue, NULL); // set the phone number property
+    
+    //add value "mail" to newPerson as MultiValueRef
+    NSString *emailAddress = [contactDict valueForKey:@"email"];
+    ABMutableMultiValueRef mailMultiValue  = ABMultiValueCreateMutable(kABMultiStringPropertyType);
+    ABMultiValueAddValueAndLabel(mailMultiValue, (__bridge CFTypeRef) emailAddress, kABWorkLabel, NULL);
+    ABRecordSetValue(newPerson, kABPersonEmailProperty, mailMultiValue, NULL); // set the email address property
+
     ABNewPersonViewController *newPersonController = [[ABNewPersonViewController alloc] init];
+    [newPersonController setDisplayedPerson:newPerson];
     newPersonController.newPersonViewDelegate = self;
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:newPersonController];
     
